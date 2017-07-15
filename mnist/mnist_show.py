@@ -3,8 +3,13 @@ import struct
 import numpy as np
 
 """
-Loosely inspired by http://abel.ee.ucla.edu/cvxopt/_downloads/mnist.py
-which is GPL licensed.
+Copied from https://gist.github.com/akesling/5358964 and its comments.
+Usage:
+1. install matplotlib: sudo pip install matplotlib
+2. install python-tk: sudo apt install python-tk
+3. gunzip training files: gunzip train-images-idx3-ubyte.gz train-labels-idx1-ubyte.gz
+4. run: python mnist_show.py
+   It first show the image, and then the ascii output.
 """
 
 def read(dataset = "training", path = "."):
