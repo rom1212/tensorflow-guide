@@ -28,6 +28,8 @@ from tensorflow.contrib.learn.python.learn.datasets import base
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import random_seed
 
+from .convert_csv_to_mnist import read_csv_images_lables
+
 # CVDF mirror of http://yann.lecun.com/exdb/mnist/
 SOURCE_URL = 'https://storage.googleapis.com/cvdf-datasets/mnist/'
 
@@ -275,3 +277,53 @@ def read_data_sets(train_dir,
 
 def load_mnist(train_dir='MNIST-data'):
   return read_data_sets(train_dir)
+
+
+def read_csv_data_sets(train_dir,
+                       fake_data=False,
+                       one_hot=False,
+                       dtype=dtypes.float64,
+                       reshape=False,
+                       validation_size=50,
+                       seed=None):
+  if fake_data:
+
+    def fake():
+      return DataSet(
+          [], [], fake_data=True, one_hot=one_hot, dtype=dtype, seed=seed)
+
+    train = fake()
+    validation = fake()
+    test = fake()
+    return base.Datasets(train=train, validation=validation, test=test)
+
+  TRAIN_IMAGES = 'train-images-idx3-ubyte.gz'
+  TRAIN_LABELS = 'train-labels-idx1-ubyte.gz'
+  TEST_IMAGES = 't10k-images-idx3-ubyte.gz'
+  TEST_LABELS = 't10k-labels-idx1-ubyte.gz'
+
+  TRAIN_CSV = 'train.csv.gz'
+  TEST_CSV = 'test.csv.gz'
+
+  train_images, train_labels = read_csv_images_lables(TRAIN_CSV, 2)
+  test_images, test_labels = read_csv_images_lables(TEST_CSV, 2)
+
+  if not 0 <= validation_size <= len(train_images):
+    raise ValueError(
+        'Validation size should be between 0 and {}. Received: {}.'
+        .format(len(train_images), validation_size))
+
+  validation_images = train_images[:validation_size]
+  validation_labels = train_labels[:validation_size]
+  train_images = train_images[validation_size:]
+  train_labels = train_labels[validation_size:]
+
+  options = dict(dtype=dtype, reshape=reshape, seed=seed)
+
+  train = DataSet(train_images, train_labels, **options)
+  validation = DataSet(validation_images, validation_labels, **options)
+  test = DataSet(test_images, test_labels, **options)
+
+  return base.Datasets(train=train, validation=validation, test=test)
+
+

@@ -25,6 +25,11 @@ def create_images_labels(data, day_len):
     return (images, labels)
 
 
+def read_csv_images_lables(csv_filename, day_len):
+    data = read_data(csv_filename)
+    return create_images_labels(data, day_len)
+
+
 #def write_training(images, labels):
     
 
