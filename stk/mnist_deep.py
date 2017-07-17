@@ -30,7 +30,8 @@ import argparse
 import sys
 import tempfile
 
-from tensorflow.examples.tutorials.mnist import input_data
+#from tensorflow.examples.tutorials.mnist import input_data
+from mnist import read_csv_data_sets
 
 import tensorflow as tf
 
@@ -125,13 +126,19 @@ def bias_variable(shape):
 
 def main(_):
   # Import data
-  mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+  dim_per_day = 6
+  day_len = 4 # 
+  dim = day_len * dim_per_day
+  num_classes = 2
+  # Import data
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, day_len=day_len)
+
 
   # Create the model
-  x = tf.placeholder(tf.float32, [None, 784])
+  x = tf.placeholder(tf.float32, [None, dim])
 
   # Define loss and optimizer
-  y_ = tf.placeholder(tf.float32, [None, 10])
+  y_ = tf.placeholder(tf.float32, [None, num_classes])
 
   # Build the graph for the deep net
   y_conv, keep_prob = deepnn(x)
