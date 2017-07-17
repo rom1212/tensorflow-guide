@@ -281,6 +281,7 @@ def load_mnist(train_dir='MNIST-data'):
 
 def read_csv_data_sets(train_dir,
                        num_classes=2,
+                       day_len=2,
                        fake_data=False,
                        one_hot=True,
                        dtype=dtypes.float64,
@@ -306,8 +307,8 @@ def read_csv_data_sets(train_dir,
   TRAIN_CSV = 'train.csv.gz'
   TEST_CSV = 'test.csv.gz'
 
-  train_images, train_labels = read_csv_images_lables(TRAIN_CSV, 2)
-  test_images, test_labels = read_csv_images_lables(TEST_CSV, 2)
+  train_images, train_labels = read_csv_images_lables(TRAIN_CSV, day_len)
+  test_images, test_labels = read_csv_images_lables(TEST_CSV, day_len)
   if one_hot:
     train_labels = dense_to_one_hot(train_labels, num_classes)
     test_labels = dense_to_one_hot(test_labels, num_classes)

@@ -35,11 +35,14 @@ FLAGS = None
 
 def main(_):
   dim_per_day = 6
-  day_len = 2
+  day_len = 2 # 0.586207, 0.413793
+  day_len = 3 # 0.596491, 0.403509
+  day_len = 4 # 0.607143, 0.535714, 0.392857
+  day_len = 8 # 0.596154, 0.403846
   dim = day_len * dim_per_day
   num_classes = 2
   # Import data
-  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, day_len=day_len)
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, dim])
