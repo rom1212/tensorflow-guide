@@ -11,7 +11,7 @@ def read_data(csv_filename):
     return data
 
 
-def create_training(data, day_len):
+def create_images_labels(data, day_len):
     num_samples = data.shape[0] - day_len  # need one more sample for label.
     # contrib/learn/python/learn/datasets/mnist.py. images are is unint8, 
     images = np.arange(0, dtype=np.float64)
@@ -31,7 +31,7 @@ def create_training(data, day_len):
 csv_filename = './600000.ss.txt'
 data = read_data(csv_filename)
 
-images, labels = create_training(data, 2)
+images, labels = create_images_labels(data, 2)
 print('images')
 print 'images.shape:', images.shape
 print 'images.ndim:', images.ndim
