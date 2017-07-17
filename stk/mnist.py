@@ -121,7 +121,7 @@ class DataSet(object):
     # If op level seed is not set, use whatever graph level seed is returned
     numpy.random.seed(seed1 if seed is None else seed2)
     dtype = dtypes.as_dtype(dtype).base_dtype
-    if dtype not in (dtypes.uint8, dtypes.float32):
+    if dtype not in (dtypes.uint8, dtypes.float32, dtypes.float64):
       raise TypeError('Invalid image dtype %r, expected uint8 or float32' %
                       dtype)
     if fake_data:
@@ -138,10 +138,12 @@ class DataSet(object):
         assert images.shape[3] == 1
         images = images.reshape(images.shape[0],
                                 images.shape[1] * images.shape[2])
-      if dtype == dtypes.float32:
-        # Convert from [0, 255] -> [0.0, 1.0].
-        images = images.astype(numpy.float32)
-        images = numpy.multiply(images, 1.0 / 255.0)
+      # This is not needed for virtual images without normalization.
+      # A better way is to have a normalization parameter.
+      # if dtype == dtypes.float32:
+      #   # Convert from [0, 255] -> [0.0, 1.0].
+      #   images = images.astype(numpy.float32)
+      #   images = numpy.multiply(images, 1.0 / 255.0)
     self._images = images
     self._labels = labels
     self._epochs_completed = 0
