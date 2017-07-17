@@ -25,7 +25,8 @@ from __future__ import print_function
 import argparse
 import sys
 
-from tensorflow.examples.tutorials.mnist import input_data
+#from tensorflow.examples.tutorials.mnist import input_data
+from mnist import read_csv_data_sets
 
 import tensorflow as tf
 
@@ -33,17 +34,21 @@ FLAGS = None
 
 
 def main(_):
+  dim_per_day = 6
+  day_len = 2
+  dim = day_len * dim_per_day
+  num_classes = 2
   # Import data
-  mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True)
 
   # Create the model
-  x = tf.placeholder(tf.float32, [None, 784])
-  W = tf.Variable(tf.zeros([784, 10]))
-  b = tf.Variable(tf.zeros([10]))
+  x = tf.placeholder(tf.float32, [None, dim])
+  W = tf.Variable(tf.zeros([dim, num_classes]))
+  b = tf.Variable(tf.zeros([num_classes]))
   y = tf.matmul(x, W) + b
 
   # Define loss and optimizer
-  y_ = tf.placeholder(tf.float32, [None, 10])
+  y_ = tf.placeholder(tf.float32, [None, num_classes])
 
   # The raw formulation of cross-entropy,
   #

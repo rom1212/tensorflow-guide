@@ -28,7 +28,7 @@ from tensorflow.contrib.learn.python.learn.datasets import base
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import random_seed
 
-from .convert_csv_to_mnist import read_csv_images_lables
+from convert_csv_to_mnist import read_csv_images_lables
 
 # CVDF mirror of http://yann.lecun.com/exdb/mnist/
 SOURCE_URL = 'https://storage.googleapis.com/cvdf-datasets/mnist/'
@@ -280,8 +280,9 @@ def load_mnist(train_dir='MNIST-data'):
 
 
 def read_csv_data_sets(train_dir,
+                       num_classes=2,
                        fake_data=False,
-                       one_hot=False,
+                       one_hot=True,
                        dtype=dtypes.float64,
                        reshape=False,
                        validation_size=50,
@@ -307,6 +308,9 @@ def read_csv_data_sets(train_dir,
 
   train_images, train_labels = read_csv_images_lables(TRAIN_CSV, 2)
   test_images, test_labels = read_csv_images_lables(TEST_CSV, 2)
+  if one_hot:
+    train_labels = dense_to_one_hot(train_labels, num_classes)
+    test_labels = dense_to_one_hot(test_labels, num_classes)
 
   if not 0 <= validation_size <= len(train_images):
     raise ValueError(
