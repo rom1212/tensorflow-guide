@@ -38,7 +38,7 @@ import tensorflow as tf
 FLAGS = None
 
 
-def deepnn(x):
+def deepnn(x, nclass, nrow, ncol):
   """deepnn builds the graph for a deep net for classifying digits.
 
   Args:
@@ -55,12 +55,14 @@ def deepnn(x):
   # Last dimension is for "features" - there is only one here, since images are
   # grayscale -- it would be 3 for an RGB image, 4 for RGBA, etc.
   with tf.name_scope('reshape'):
-    x_image = tf.reshape(x, [-1, 6, 8, 1])
+    x_image = tf.reshape(x, [-1, nrow, ncol, 1])
 
   # First convolutional layer - maps one grayscale image to 32 feature maps.
   with tf.name_scope('conv1'):
-    W_conv1 = weight_variable([5, 5, 1, 32])
-    b_conv1 = bias_variable([32])
+    k1 = [5, 5, 1, 32]
+    print('k1:', k1)
+    W_conv1 = weight_variable(k1)
+    b_conv1 = bias_variable([k1[-1]])
     h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 
   # Pooling layer - downsamples by 2X.
@@ -80,10 +82,14 @@ def deepnn(x):
   # Fully connected layer 1 -- after 2 round of downsampling, our 28x28 image
   # is down to 7x7x64 feature maps -- maps this to 1024 features.
   with tf.name_scope('fc1'):
-    W_fc1 = weight_variable([3 * 4 * 32, 1024])
-    b_fc1 = bias_variable([1024])
+    print('values:', ncol, nrow, k1[-1])
+    print('types:', type(ncol/2), type(nrow/2), type(k1[-1]))
+    k_fc1 = [int(ncol/2) * int(nrow/2) * k1[-1], 1024]
+    print('k_fc1:', k_fc1)
+    W_fc1 = weight_variable(k_fc1)
+    b_fc1 = bias_variable([k_fc1[-1]])
 
-    h_pool2_flat = tf.reshape(h_pool1, [-1, 3*4*32])
+    h_pool2_flat = tf.reshape(h_pool1, [-1, k_fc1[0]])
     h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
   # Dropout - controls the complexity of the model, prevents co-adaptation of
@@ -94,8 +100,8 @@ def deepnn(x):
 
   # Map the 1024 features to 10 classes, one for each digit
   with tf.name_scope('fc2'):
-    W_fc2 = weight_variable([1024, 2])
-    b_fc2 = bias_variable([2])
+    W_fc2 = weight_variable([k_fc1[-1], nclass])
+    b_fc2 = bias_variable([nclass])
 
     y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
   return y_conv, keep_prob
@@ -128,16 +134,22 @@ def main(_):
   print('FLAGS.data_dir:', FLAGS.data_dir)
   print('FLAGS.iter:', FLAGS.iter)
 
-  # Import data
-  orig_dim_per_day = 6
-  dup = 1
-  dim_per_day = orig_dim_per_day * dup
-  day_len = 8 #
-  dim = day_len * dim_per_day
+  # Parameters
   num_classes = 2
+  nrow = 12
+  orig_dim_per_day = 6
+  dup = 2
+  print('types of num_classes, nrow, orig_dim_per_day, dup:', num_classes, nrow, orig_dim_per_day, dup)
+
+  ncol = orig_dim_per_day * dup
+
+  dim_per_day = ncol
+  day_len = nrow
+  dim = day_len * dim_per_day
+  dim = nrow * ncol
+
   # Import data
   mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, day_len=day_len, dup=dup)
-
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, dim])
@@ -146,7 +158,7 @@ def main(_):
   y_ = tf.placeholder(tf.float32, [None, num_classes])
 
   # Build the graph for the deep net
-  y_conv, keep_prob = deepnn(x)
+  y_conv, keep_prob = deepnn(x, num_classes, nrow, ncol)
 
   with tf.name_scope('loss'):
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=y_,
