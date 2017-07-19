@@ -25,7 +25,7 @@ def create_images_labels_flat(data, day_len):
     return (images, labels, num_samples)
 
 
-def read_csv_images_lables(csv_filename, day_len):
+def read_csv_images_lables(csv_filename, day_len, dup=1):
     data = read_data(csv_filename)
     images, labels, num_samples = create_images_labels_flat(data, day_len)
     print 'num_samples:', num_samples
@@ -38,6 +38,27 @@ def read_csv_images_lables(csv_filename, day_len):
     print 'after reshape:'
     print '\timages.ndim:', images.ndim, ', images.shape:', images.shape
     print '\tlabels.ndim:', labels.ndim, ', labels.shape:', labels.shape
+
+    out = images.reshape(-1, images.shape[1]/data.shape[1], data.shape[1])
+    print 'out.shape:', out.shape
+    print 'out[0,:]:', out[0,:]
+
+    if (dup == 1):
+        return (images, labels)
+
+    images_2d = images.reshape(num_samples, images.shape[1]/data.shape[1], data.shape[1])
+    images_2d_dup = images_2d
+    for _ in range(dup - 1):
+        images_2d_dup = np.concatenate((images_2d_dup, images_2d), axis=2)
+    images = images_2d_dup.reshape(images_2d_dup.shape[0], images_2d_dup.shape[1]*images_2d_dup.shape[2])
+
+    print 'after duplication:'
+    print '\timages.ndim:', images.ndim, ', images.shape:', images.shape
+    print '\tlabels.ndim:', labels.ndim, ', labels.shape:', labels.shape
+
+    out = images.reshape(-1, images.shape[1]/(data.shape[1] * dup), data.shape[1] * dup)
+    print 'out.shape:', out.shape
+    print 'out[0,:]:', out[0,:]
 
     return (images, labels)
 
