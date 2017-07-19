@@ -136,12 +136,12 @@ def main(_):
 
   # Parameters
   num_classes = 2
-  nrow = 12
+  nrow = 24
+  ncol = 24
   orig_dim_per_day = 6
-  dup = 2
-  print('types of num_classes, nrow, orig_dim_per_day, dup:', num_classes, nrow, orig_dim_per_day, dup)
 
-  ncol = orig_dim_per_day * dup
+  dup = int(ncol / orig_dim_per_day)
+  print('types of num_classes, nrow, orig_dim_per_day, dup:', num_classes, nrow, orig_dim_per_day, dup)
 
   dim_per_day = ncol
   day_len = nrow
