@@ -129,12 +129,14 @@ def main(_):
   print('FLAGS.iter:', FLAGS.iter)
 
   # Import data
-  dim_per_day = 6
+  orig_dim_per_day = 6
+  dup = 1
+  dim_per_day = orig_dim_per_day * dup
   day_len = 8 #
   dim = day_len * dim_per_day
   num_classes = 2
   # Import data
-  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, day_len=day_len)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, day_len=day_len, dup=dup)
 
 
   # Create the model
