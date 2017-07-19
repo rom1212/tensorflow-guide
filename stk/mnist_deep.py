@@ -125,6 +125,9 @@ def bias_variable(shape):
 
 
 def main(_):
+  print('FLAGS.data_dir:', FLAGS.data_dir)
+  print('FLAGS.iter:', FLAGS.iter)
+
   # Import data
   dim_per_day = 6
   day_len = 8 #
@@ -163,8 +166,7 @@ def main(_):
 
   with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    #for i in range(20000):
-    for i in range(20000):
+    for i in range(FLAGS.iter):
       batch = mnist.train.next_batch(50)
       if i % 100 == 0:
         train_accuracy = accuracy.eval(feed_dict={
@@ -180,5 +182,8 @@ if __name__ == '__main__':
   parser.add_argument('--data_dir', type=str,
                       default='/tmp/tensorflow/mnist/input_data',
                       help='Directory for storing input data')
+  parser.add_argument('--iter', type=int,
+                      default=20000,
+                      help='Number of iterations for training')
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
