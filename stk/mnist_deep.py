@@ -68,22 +68,22 @@ def deepnn(x):
     h_pool1 = max_pool_2x2(h_conv1)
 
   # Second convolutional layer -- maps 32 feature maps to 64.
-#  with tf.name_scope('conv2'):
-#    W_conv2 = weight_variable([5, 5, 32, 64])
-#    b_conv2 = bias_variable([64])
-#    h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
-#
-#  # Second pooling layer.
-#  with tf.name_scope('pool2'):
-#    h_pool2 = max_pool_2x2(h_conv2)
+  with tf.name_scope('conv2'):
+    W_conv2 = weight_variable([5, 5, 32, 64])
+    b_conv2 = bias_variable([64])
+    h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
+
+  # Second pooling layer.
+  with tf.name_scope('pool2'):
+    h_pool2 = max_pool_2x2(h_conv2)
 
   # Fully connected layer 1 -- after 2 round of downsampling, our 28x28 image
   # is down to 7x7x64 feature maps -- maps this to 1024 features.
   with tf.name_scope('fc1'):
-    W_fc1 = weight_variable([6 * 6 * 32, 1024])
+    W_fc1 = weight_variable([3 * 3 * 64, 1024])
     b_fc1 = bias_variable([1024])
 
-    h_pool2_flat = tf.reshape(h_pool1, [-1, 6 * 6 * 32])
+    h_pool2_flat = tf.reshape(h_pool2, [-1, 3 * 3 * 64])
     h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
   # Dropout - controls the complexity of the model, prevents co-adaptation of
