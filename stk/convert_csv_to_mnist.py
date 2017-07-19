@@ -3,8 +3,8 @@ import numpy as np
 
 def read_data(csv_filename):
     csv = np.genfromtxt(csv_filename, delimiter=",")
-    print csv.dtype
-    print csv.shape
+    print '======== read_csv file:', csv_filename
+    print 'csv.dtype:', csv.dtype, ', csv.shape:', csv.shape
     
     # useful data, remove the header, and the first column
     data = csv[1:,1:]
@@ -28,17 +28,16 @@ def create_images_labels_flat(data, day_len):
 def read_csv_images_lables(csv_filename, day_len):
     data = read_data(csv_filename)
     images, labels, num_samples = create_images_labels_flat(data, day_len)
-    print '======== read_csv_images_lables num_samples:', num_samples
-    print 'images.ndim:', images.ndim
-    print 'images.shape:', images.shape
-    print 'labels.shape:', labels.shape
-    print 'labels.ndim:', labels.ndim
+    print 'num_samples:', num_samples
+    print '===before reshape==='
+    print 'images.ndim:', images.ndim, ', images.shape:', images.shape
+    print 'labels.ndim:', labels.ndim, ', labels.shape:', labels.shape
+
     images = images.reshape(num_samples, images.shape[0]/num_samples)
     labels = labels.reshape(num_samples, 1)
-    print 'images.ndim:', images.ndim
-    print 'images.shape:', images.shape
-    print 'labels.shape:', labels.shape
-    print 'labels.ndim:', labels.ndim
+    print '===after reshape==='
+    print 'images.ndim:', images.ndim, ', images.shape:', images.shape
+    print 'labels.ndim:', labels.ndim, ', labels.shape:', labels.shape
 
     return (images, labels)
 
