@@ -20,6 +20,7 @@ from __future__ import division
 from __future__ import print_function
 
 import gzip
+import os
 
 import numpy
 from six.moves import xrange  # pylint: disable=redefined-builtin
@@ -299,16 +300,11 @@ def read_csv_data_sets(train_dir,
     test = fake()
     return base.Datasets(train=train, validation=validation, test=test)
 
-  TRAIN_IMAGES = 'train-images-idx3-ubyte.gz'
-  TRAIN_LABELS = 'train-labels-idx1-ubyte.gz'
-  TEST_IMAGES = 't10k-images-idx3-ubyte.gz'
-  TEST_LABELS = 't10k-labels-idx1-ubyte.gz'
-
   TRAIN_CSV = 'train.csv.gz'
   TEST_CSV = 'test.csv.gz'
 
-  train_images, train_labels = read_csv_images_lables(TRAIN_CSV, day_len)
-  test_images, test_labels = read_csv_images_lables(TEST_CSV, day_len)
+  train_images, train_labels = read_csv_images_lables(os.path.join(train_dir, TRAIN_CSV), day_len)
+  test_images, test_labels = read_csv_images_lables(os.path.join(train_dir, TEST_CSV), day_len)
   if one_hot:
     train_labels = dense_to_one_hot(train_labels, num_classes)
     test_labels = dense_to_one_hot(test_labels, num_classes)

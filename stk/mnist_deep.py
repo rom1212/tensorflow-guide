@@ -163,6 +163,7 @@ def main(_):
 
   with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
+    #for i in range(20000):
     for i in range(20000):
       batch = mnist.train.next_batch(50)
       if i % 100 == 0:
