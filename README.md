@@ -1,3 +1,7 @@
+# Docs
+* Convolutional Networks: https://www.youtube.com/watch?v=jajksuQW4mc
+* https://www.youtube.com/watch?v=hSDrJM6fJFM
+
 # Specify the number of cores
 https://github.com/fchollet/keras/issues/4314
 ```
