@@ -26,6 +26,7 @@ import argparse
 import sys
 
 from tensorflow.examples.tutorials.mnist import input_data
+from datasets_mnist import read_data_sets, read_csv_data_sets
 
 import tensorflow as tf
 
@@ -34,7 +35,8 @@ FLAGS = None
 
 def main(_):
   # Import data
-  mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+  #mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, num_classes=10, day_len=28, dup=4)
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784])
@@ -70,6 +72,28 @@ def main(_):
   accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
   print(sess.run(accuracy, feed_dict={x: mnist.test.images,
                                       y_: mnist.test.labels}))
+  prediction = tf.argmax(y,1)
+  result = prediction.eval(feed_dict={x: mnist.test.images}, session=sess)
+  print('prediction result.shape:', result.shape)
+  print('prediction type result:', type(result))
+  print('prediction result[0-5]:', result[0:20])
+  print('prediction sum(result):', sum(result))
+
+  print('mnist.test.labels.shape', mnist.test.labels.shape)
+  print('type mnist.test.labels', type(mnist.test.labels))
+  print('mnist.test.labels', mnist.test.labels[0:20,:])
+  print('sum(mnist.test.labels[:,0])', sum(mnist.test.labels[:,0]))
+  print('sum(mnist.test.labels[:,1])', sum(mnist.test.labels[:,1]))
+
+  precision = 0.0
+  count = 0
+  if sum(result) != 0:
+      for i in range(result.shape[0]):
+          if result[i] == 1 and mnist.test.labels[i, 1] == 1:
+              count += 1
+      precision = 1.0 * count / sum(result)
+  print("precision = ", precision, ", ", count, "/", sum(result))
+
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
