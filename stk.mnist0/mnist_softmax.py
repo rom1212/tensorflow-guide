@@ -72,6 +72,10 @@ def main(_):
   accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
   print(sess.run(accuracy, feed_dict={x: mnist.test.images,
                                       y_: mnist.test.labels}))
+  accuracy_value = sess.run(
+    accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})
+  print('accuracy_value:', accuracy_value)
+
   prediction = tf.argmax(y,1)
   result = prediction.eval(feed_dict={x: mnist.test.images}, session=sess)
   print('prediction result.shape:', result.shape)
@@ -93,6 +97,7 @@ def main(_):
               count += 1
       precision = 1.0 * count / sum(result)
   print("precision = ", precision, ", ", count, "/", sum(result))
+  return (accuracy_value, precision)
 
 
 if __name__ == '__main__':
