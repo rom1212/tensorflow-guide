@@ -31,7 +31,6 @@ import sys
 import tempfile
 
 #from .mnist import input_data
-import input_data
 from datasets_mnist import read_data_sets, read_csv_data_sets
 
 import tensorflow as tf
