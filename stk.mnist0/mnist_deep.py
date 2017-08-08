@@ -30,7 +30,9 @@ import argparse
 import sys
 import tempfile
 
-from tensorflow.examples.tutorials.mnist import input_data
+#from .mnist import input_data
+import input_data
+from datasets_mnist import read_data_sets, read_csv_data_sets
 
 import tensorflow as tf
 
@@ -125,7 +127,25 @@ def bias_variable(shape):
 
 def main(_):
   # Import data
-  mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+  #mnist = read_data_sets(FLAGS.data_dir, one_hot=True, dtype=tf.float64)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, num_classes=10, day_len=28, dup=4)
+  data = mnist.train.images
+  print('minglog data = mnist.train.images')
+  print('minglog type(data)', type(data))
+  print('minglog data.shape', data.shape)
+  print('minglog type(data)', type(data[0,0]))
+
+  data = mnist.validation.images
+  print('minglog data = mnist.validation.images')
+  print('minglog type(data)', type(data))
+  print('minglog data.shape', data.shape)
+  print('minglog type(data)', type(data[0,0]))
+
+  data = mnist.test.images
+  print('minglog data = mnist.test.images')
+  print('minglog type(data)', type(data))
+  print('minglog data.shape', data.shape)
+  print('minglog type(data)', type(data[0,0]))
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784])
@@ -154,9 +174,14 @@ def main(_):
   train_writer = tf.summary.FileWriter(graph_location)
   train_writer.add_graph(tf.get_default_graph())
 
-  with tf.Session() as sess:
+  config = tf.ConfigProto(intra_op_parallelism_threads=1,
+                          inter_op_parallelism_threads=1,
+                          allow_soft_placement=True,
+                          device_count = {'CPU': 1})
+  # session = tf.Session(config=config)
+  with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
-    for i in range(20000):
+    for i in range(500):
       batch = mnist.train.next_batch(50)
       if i % 100 == 0:
         train_accuracy = accuracy.eval(feed_dict={
@@ -167,10 +192,32 @@ def main(_):
     print('test accuracy %g' % accuracy.eval(feed_dict={
         x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
 
+    prediction = tf.argmax(y_conv, 1)
+    result = prediction.eval(feed_dict={x: mnist.test.images, keep_prob: 1.0}, session=sess)
+    print('prediction result.shape:', result.shape)
+    print('prediction type result:', type(result))
+    print('prediction result[0-5]:', result[:])
+    print('prediction sum(result):', sum(result))
+
+    print('mnist.test.labels.shape', mnist.test.labels.shape)
+    print('type mnist.test.labels', type(mnist.test.labels))
+    print('mnist.test.labels', mnist.test.labels[:,:])
+    print('sum(mnist.test.labels[:,0])', sum(mnist.test.labels[:,0]))
+    print('sum(mnist.test.labels[:,1])', sum(mnist.test.labels[:,1]))
+
+    precision = 0.0
+    count = 0
+    if sum(result) != 0:
+        for i in range(result.shape[0]):
+            if result[i] == 1 and mnist.test.labels[i, 1] == 1:
+                count += 1
+        precision = 1.0 * count / sum(result)
+    print("precision = ", precision, ", ", count, "/", sum(result))
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--data_dir', type=str,
-                      default='/tmp/tensorflow/mnist/input_data',
+                      default='./',
                       help='Directory for storing input data')
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
