@@ -191,6 +191,10 @@ def main(_):
 
     print('test accuracy %g' % accuracy.eval(feed_dict={
         x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+    accuracy_value = accuracy.eval(feed_dict={
+        x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0})
+    print('accuracy_value:', accuracy_value)
+
 
     prediction = tf.argmax(y_conv, 1)
     result = prediction.eval(feed_dict={x: mnist.test.images, keep_prob: 1.0}, session=sess)
@@ -213,6 +217,8 @@ def main(_):
                 count += 1
         precision = 1.0 * count / sum(result)
     print("precision = ", precision, ", ", count, "/", sum(result))
+    return (accuracy_value, precision)
+
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
