@@ -3,15 +3,11 @@
 import argparse
 import sys
 import mnist_softmax
+import mnist_deep
 
 FLAGS = None
-if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--data_dir', type=str, default='./testdata_1/',
-                      help='Directory for storing input data')
-  FLAGS, unparsed = parser.parse_known_args()
-  print('FLAGS:', FLAGS, ', unparsed:', unparsed)
 
+def test_mnist_softmax():
   print('####################### test mnist_softmax.py #######################')
   mnist_softmax.FLAGS = FLAGS
   iter = 20
@@ -28,5 +24,18 @@ if __name__ == '__main__':
   print('prec_list:', prec_list)
   print('average accuracy :', sum(accu_list)/len(accu_list))
   print('average precision:', sum(prec_list)/len(prec_list))
+
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--data_dir', type=str, default='./testdata_1/',
+                      help='Directory for storing input data')
+  parser.add_argument('--type', type=str, default='all',
+                      help='test type: softmax, deep, all')
+  FLAGS, unparsed = parser.parse_known_args()
+  print('FLAGS:', FLAGS, ', unparsed:', unparsed)
+
+  if FLAGS.type == 'softmax' or FLAGS.type == 'all':
+    test_mnist_softmax()
 
   # tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
