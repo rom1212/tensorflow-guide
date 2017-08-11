@@ -323,7 +323,7 @@ def read_csv_data_sets(train_dir,
                        one_hot=True,
                        dtype=dtypes.float64,
                        reshape=False,
-                       validation_size=1,
+                       validation_size=50,
                        seed=None):
   if fake_data:
 
