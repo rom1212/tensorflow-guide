@@ -29,7 +29,7 @@ from tensorflow.contrib.learn.python.learn.datasets import base
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import random_seed
 
-from convert_csv_to_mnist import read_csv_images_lables
+from convert_csv_to_mnist import read_csv_images_lables, convert_tdx_txt_to_train_test
 
 # CVDF mirror of http://yann.lecun.com/exdb/mnist/
 SOURCE_URL = 'https://storage.googleapis.com/cvdf-datasets/mnist/'
@@ -229,11 +229,12 @@ class DataSet(object):
 
 
 def filter_data(images, labels):
-  print('fileter_data:', ', images.shape:', images.shape, ', labels.shape:', labels.shape)
+  print('before fileter_data:', ', images.shape:', images.shape, ', labels.shape:', labels.shape)
   indexes = []
   for i in range(labels.shape[0]):
     if labels[i, 0] == 1 or labels[i, 1] == 1:
       indexes.append(i)
+  print('after fileter_data:', 'len(indexes):', len(indexes))
   return images[indexes,:], labels[indexes, :]
 
   new_images = numpy.arange(0, dtype=numpy.float64)
@@ -244,6 +245,7 @@ def filter_data(images, labels):
     if labels[i, 0] == 1 or labels[i, 1] == 1:
       new_images = numpy.append(new_images, images[i])
       new_labels = numpy.append(new_labels, labels[i])  
+  print('after fileter_data:', ', new_images.shape:', new_images.shape, ', new_labels.shape:', new_labels.shape)
   return (new_images, new_labels)
 
 
@@ -324,7 +326,8 @@ def read_csv_data_sets(train_dir,
                        dtype=dtypes.float64,
                        reshape=False,
                        validation_size=50,
-                       seed=None):
+                       seed=None,
+                       tdx=False):
   if fake_data:
 
     def fake():
@@ -341,11 +344,17 @@ def read_csv_data_sets(train_dir,
 
   train_file = os.path.join(train_dir, TRAIN_CSV)
   test_file = os.path.join(train_dir, TEST_CSV)
+  if tdx:
+    # train_dir is the filename.
+    train_file, test_file = convert_tdx_txt_to_train_test(train_dir)
+
   print('train_file:', train_file)
   print('test_file:', test_file)
 
   train_images, train_labels = read_csv_images_lables(train_file, day_len, dup)
   test_images, test_labels = read_csv_images_lables(test_file, day_len, dup)
+
+
   if one_hot:
     train_labels = dense_to_one_hot(train_labels, num_classes)
     test_labels = dense_to_one_hot(test_labels, num_classes)

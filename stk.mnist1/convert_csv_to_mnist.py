@@ -90,6 +90,63 @@ def read_csv_images_lables(csv_filename, day_len, dup=1):
     return (images, labels)
 
 
+def convert_tdx_txt_to_csv(txt_filename):
+  csv_filename = txt_filename + '.csv'
+  with open(txt_filename) as file:
+    lines = file.readlines()
+#    for i in range(len(lines)):
+#      lines[i].strip()
+    for i in range(5):
+      print 'line:', lines[i]
+      print 'line strip:', lines[i].rstrip()
+
+    out_lines = []
+    out_lines.append('Index,Open,High,Low,Close,Volume,Cap\n')
+    # out_lines.extend(lines[2:-2])
+    for line in lines[2:-2]:
+      out_lines.append(line.rstrip() + '\n')
+
+    print 'out_lines:', len(out_lines)
+    with open(csv_filename, 'w') as out:
+      out.writelines(out_lines)
+      print 'wrote to ', csv_filename
+  return csv_filename
+
+
+def split_tdx_csv_to_train_test(csv_filename, start_year, test_days):
+  selected_lines = []
+  test_lines = []
+  with open(csv_filename) as file:
+    lines = file.readlines()
+
+    selected_lines.append(lines[0])
+    ok_to_add = False
+    for line in lines:
+      if line.startswith(start_year):
+        ok_to_add = True
+      if ok_to_add:
+        selected_lines.append(line)
+
+  train_filename = csv_filename + '.train.csv'
+  with open(train_filename, 'w') as out:
+    out.writelines(selected_lines[:-test_days])
+    print 'wrote to ', train_filename
+
+  test_lines.append(selected_lines[0])
+  test_lines.extend(selected_lines[-test_days:])
+  test_filename = csv_filename + '.test.csv'
+  with open(test_filename, 'w') as out:
+    out.writelines(test_lines)
+    print 'wrote to ', test_filename
+  return (train_filename, test_filename)
+
+
+def convert_tdx_txt_to_train_test(txt_filename):
+  csv_filename = convert_tdx_txt_to_csv(txt_filename)
+  return split_tdx_csv_to_train_test(csv_filename, '2016', 50)
+#  return read_csv_images_lables(csv_filename, day_len, dup)
+
+
 #def write_training(images, labels):
     
 
@@ -106,13 +163,3 @@ def read_csv_images_lables(csv_filename, day_len, dup=1):
 #print 'labels.shape:', labels.shape
 #print 'labels.ndim:', labels.ndim
 #print labels[:10]
-
-
-
-        
-    
-
-
-
-
-

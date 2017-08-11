@@ -36,7 +36,7 @@ FLAGS = None
 def main(_):
   # Import data
   #mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
-  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, num_classes=10, day_len=28, dup=4)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, num_classes=10, day_len=28, dup=4, tdx=True)
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784])
