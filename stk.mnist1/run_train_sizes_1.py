@@ -24,14 +24,14 @@ def test_mnist_softmax(train_days, test_days, overlap):
   for i in range(iter):
     print('################## iter: %d #################' % i)
     accuracy, precision = mnist_softmax.main([sys.argv[0]] + unparsed,
-                                             tdx=True, train_days, test_days, overlap)
+                                             True, train_days, test_days, overlap)
     accu_list.append(accuracy)
     prec_list.append(precision)
     print('accuracy: {}, precision: {}'.format(accuracy, precision))
 
   print('accu_list:', accu_list)
   print('prec_list:', prec_list)
-  print('train_days:', train_days, 'test_days:', test_days, 'overlap:', overlap,
+  #print('train_days:', train_days, 'test_days:', test_days, 'overlap:', overlap,
   print('average accuracy:', sum(accu_list)/len(accu_list),
         ', average precision:', sum(prec_list)/len(prec_list),
         ', train_days:', train_days,
