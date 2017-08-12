@@ -141,9 +141,40 @@ def split_tdx_csv_to_train_test(csv_filename, start_year, test_days):
   return (train_filename, test_filename)
 
 
-def convert_tdx_txt_to_train_test(txt_filename):
+def split_tdx_csv_to_train_test(csv_filename, train_days, test_days, overlap):
+  all_lines = []
+  with open(csv_filename) as file:
+    all_lines = file.readlines()
+  header = all_lines[0]
+
+  train_start = -(train_days + test_days)
+  train_end = -test_days
+  train_filename = csv_filename + '.train.%d.sep.csv' % train_days
+  if overlap:
+    train_start += 28 - 1  # Because 28 days for a feature, so less one day will make it not good for a feature.
+    train_end += 28 - 1
+    train_filename = csv_filename + '.train.%d.overlap.csv' % train_days
+
+  with open(train_filename, 'w') as out:
+    train_lines = []
+    train_lines.append(header)
+    train_lines.extend(all_lines[train_start:train_end])
+    out.writelines(train_lines)
+    print 'wrote to ', train_filename
+
+  test_filename = csv_filename + '.test.%d.csv' % test_days
+  with open(test_filename, 'w') as out:
+    test_lines = []
+    test_lines.append(header)
+    test_lines.extend(all_lines[-test_days:])
+    out.writelines(test_lines)
+    print 'wrote to ', test_filename
+  return (train_filename, test_filename)
+
+
+def convert_tdx_txt_to_train_test(txt_filename, train_days, test_days, overlap=False):
   csv_filename = convert_tdx_txt_to_csv(txt_filename)
-  return split_tdx_csv_to_train_test(csv_filename, '2016', 50)
+  return split_tdx_csv_to_train_test(csv_filename, train_days, test_days, overlap)
 #  return read_csv_images_lables(csv_filename, day_len, dup)
 
 

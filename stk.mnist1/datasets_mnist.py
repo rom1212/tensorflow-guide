@@ -327,7 +327,10 @@ def read_csv_data_sets(train_dir,
                        reshape=False,
                        validation_size=50,
                        seed=None,
-                       tdx=False):
+                       tdx=False,
+                       train_days=100,
+                       test_days=50,
+                       overlap=False):
   if fake_data:
 
     def fake():
@@ -346,7 +349,7 @@ def read_csv_data_sets(train_dir,
   test_file = os.path.join(train_dir, TEST_CSV)
   if tdx:
     # train_dir is the filename.
-    train_file, test_file = convert_tdx_txt_to_train_test(train_dir)
+    train_file, test_file = convert_tdx_txt_to_train_test(train_dir, train_days, test_days, overlap)
 
   print('train_file:', train_file)
   print('test_file:', test_file)

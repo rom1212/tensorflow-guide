@@ -33,10 +33,11 @@ import tensorflow as tf
 FLAGS = None
 
 
-def main(_):
+def main(argv, tdx=True, train_days=130, test_days=50, overlap=True):
   # Import data
   #mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
-  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, num_classes=10, day_len=28, dup=4, tdx=True)
+  mnist = read_csv_data_sets(FLAGS.data_dir, one_hot=True, num_classes=10, day_len=28, dup=4,
+                             tdx=tdx, train_days=train_days, test_days=test_days, overlap=overlap)
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784])
