@@ -10,7 +10,7 @@ FLAGS = None
 def test_mnist_softmax_sizes():
   overlap = False
   test_days = 50
-  train_days_list = range(130, 1530, 100)
+  train_days_list = range(130, 1531, 100)
   for train_days in train_days_list:
     test_mnist_softmax(train_days, test_days, overlap)
 

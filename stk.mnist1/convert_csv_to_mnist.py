@@ -96,9 +96,9 @@ def convert_tdx_txt_to_csv(txt_filename):
     lines = file.readlines()
 #    for i in range(len(lines)):
 #      lines[i].strip()
-    for i in range(5):
-      print 'line:', lines[i]
-      print 'line strip:', lines[i].rstrip()
+#    for i in range(5):
+#      print 'line:', lines[i]
+#      print 'line strip:', lines[i].rstrip()
 
     out_lines = []
     out_lines.append('Index,Open,High,Low,Close,Volume,Cap\n')
